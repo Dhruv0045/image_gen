@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      color: white;
+      background: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    img {
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    #loader {
+      margin: 20px 0;
+      display: none;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Image Generator</h1>
+    <p>Enter a prompt to generate an image:</p>
+    <input type="text" id="prompt" placeholder="Enter your prompt here">
+    <button onclick="generateImage()">Generate Image</button>
+    <div id="loader">
+      <div class="spinner"></div>
+      <p>Please wait...</p>
+    </div>
+    <div id="imageContainer"></div>
+  </div>
+
+  <script>
+    function generateImage() {
+      const prompt = document.getElementById('prompt').value.trim();
+      if (!prompt) {
+        alert("Please enter a prompt!");
+        return;
+      }
+
+      // Replace spaces with hyphens and lowercase the prompt
+      const formattedPrompt = prompt.replace(/\s+/g, '-').toLowerCase();
+      const apiUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(formattedPrompt)}`;
+      const imageContainer = document.getElementById('imageContainer');
+      const loader = document.getElementById('loader');
+
+      // Clear previous image and show the loader
+      imageContainer.innerHTML = "";
+      loader.style.display = "block";
+
+      // Create an image element
+      const img = new Image();
+      img.src = apiUrl;
+
+      // When the image is loaded, hide the loader and show the image
+      img.onload = function() {
+        loader.style.display = "none"; // Hide loader when image is loaded
+        imageContainer.innerHTML = ""; // Clear the loading text
+        imageContainer.appendChild(img); // Append the image to the container
+      };
+
+      // Handle error if image fails to load
+      img.onerror = function() {
+        loader.style.display = "none"; // Hide loader on error
+        imageContainer.innerHTML = "<p>Failed to load image. Please try again.</p>";
+      };
+    }
+  </script>
+</body>
+</html>
